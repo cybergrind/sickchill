@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+  sickchill:
+    image: sickchill/sickchill:master
+    container_name: sickchill
+    ports:
+      - 32481:8081
+    volumes:
+      - /srv/sickchill/data:/data
+      - /srv/sickchill/downloads:/downloads
+      - /srv/sickchill/tv:/tv
+      - /srv/sickchill/cache:/app/sickchill/sickchill/gui/slick/cache
+      - /etc/localtime:/etc/localtime:ro
+
+  plex:
+    image: lscr.io/linuxserver/plex
+    container_name: plex
+    environment:
+      PUID: 1000
+      PGID: 1000
+      VERSION: docker
+    network_mode: host
+    volumes:
+      - /home/kpi/extra/media/kate:/kate
+      - /srv/sickchill/tv:/sickchill/tv
+      - /srv/sickchill/downloads:/sickchill/downloads
+#    ports:
+#      - 32400:32400
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - WEBUI_PORT=32480
+    volumes:
+      - /srv/qbittorrent/config:/config
+      - /srv/sickchill/downloads:/downloads
+    ports:
+      - 32480:32480
+      - 32881:6881
+      - 32881:6881/udp
