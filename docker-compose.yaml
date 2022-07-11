@@ -12,6 +12,12 @@ services:
       - /srv/sickchill/tv:/tv
       - /srv/sickchill/cache:/app/sickchill/sickchill/gui/slick/cache
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sickchill_http.rule=Host(`sickchill.zz`) || Host(`sick.zz`)
+      - traefik.http.routers.sickchill_http.entrypoints=web
+      - traefik.http.routers.sickchill_http.service=sickchill
+      - traefik.http.services.sickchill.loadbalancer.server.port=8081
 
   plex:
     image: lscr.io/linuxserver/plex
@@ -25,6 +31,12 @@ services:
       - /home/kpi/extra/media/kate:/kate
       - /srv/sickchill/tv:/sickchill/tv
       - /srv/sickchill/downloads:/sickchill/downloads
+      - /srv/youtubedl:/youtubedl
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plex_http.rule=Host(`plex.zz`)"
+      - "traefik.http.routers.plex_http.entrypoints=web"
+      - "traefik.http.services.plex_http.loadbalancer.server.port=32400"
 #    ports:
 #      - 32400:32400
 
@@ -38,6 +50,11 @@ services:
     volumes:
       - /srv/qbittorrent/config:/config
       - /srv/sickchill/downloads:/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.torrent_http.rule=Host(`torrent.zz`)"
+      - "traefik.http.routers.torrent_http.entrypoints=web"
+      - traefik.http.services.torrent_http.loadbalancer.server.port=32480
     ports:
       - 32480:32480
       - 32881:6881
